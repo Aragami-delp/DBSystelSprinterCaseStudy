@@ -2,6 +2,7 @@ package com.aragami.casestudy;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,7 +46,10 @@ public class CaseStudyRESTController {
     }
 
     private static String convertToJson(String[] _sections) {
-        Gson gson = new GsonBuilder().create();
-        return gson.toJson(_sections);
+        Gson gson = new Gson();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("sections", gson.toJsonTree(_sections));
+
+        return gson.toJson(jsonObject);
     }
 }
