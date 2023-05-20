@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 public class CasestudyApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CasestudyApplication.class, args);
+	public static void main(String[] _args) {
+		SpringApplication.run(CasestudyApplication.class, _args);
 	}
 
 }
