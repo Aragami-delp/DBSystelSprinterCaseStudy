@@ -1,9 +1,17 @@
 package com.aragami.casestudy;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
+import java.util.ArrayList;
 
 @RestController
 public class CaseStudyRESTController {
@@ -13,11 +21,18 @@ public class CaseStudyRESTController {
     }
 
     public String getTrainSection(String _ril100, int _trainNumber,int _waggonNumber) {
-        if (isValidParameters(_ril100, _trainNumber, _waggonNumber)) {
-            String stationXmlPath = StationFileInput.getStationXmlPath(_ril100);
-            return (stationXmlPath + "|" + _trainNumber + "|" + _waggonNumber);
+        if (!isValidParameters(_ril100, _trainNumber, _waggonNumber)) {
+            return null;
         }
-        return null;
+
+        String stationXmlPath = StationFileInput.getStationXmlPath(_ril100);
+        String[] sectionsArray;
+        try {
+            sectionsArray = StationXmlParser.getSection(stationXmlPath, _trainNumber, _waggonNumber);
+        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException _e) {
+            return null;
+        }
+        return convertToJson(sectionsArray);
     }
 
     private static boolean isValidParameters(String _ril100, int _trainNumber,int _waggonNumber) {
@@ -27,5 +42,10 @@ public class CaseStudyRESTController {
                 && (trainNumberAsString.length() >= 2 && trainNumberAsString.length() <= 4)
                 && (waggonNumberAsString.length() == 1 || waggonNumberAsString.length() == 2)
         );
+    }
+
+    private static String convertToJson(String[] _sections) {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(_sections);
     }
 }

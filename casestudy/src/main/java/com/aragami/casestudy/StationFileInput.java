@@ -18,10 +18,10 @@ public class StationFileInput {
         return null;
     }
 
-    private static boolean isValidStationFilename(File file, String fileNamePrefix) {
-        String fileName = file.getName();
-        String prefix = fileName.split("_", 2)[0];
-        return fileNamePrefix.equalsIgnoreCase(prefix);
+    private static boolean isValidStationFilename(File _file, String _fileNamePrefix) {
+        String fileName = _file.getName();
+        String prefix = fileName.split("_")[0];
+        return _fileNamePrefix.equalsIgnoreCase(prefix);
     }
 
 }
