@@ -5,11 +5,11 @@ import java.util.Arrays;
 
 public class StationFileInput {
     private final static String directoryPath = "src\\main\\resources\\stations";
-    public static String getStationXmlPath(String _ril100) throws StationNotFoundException {
+    public static String getStationXmlPath(String _ril100) throws StationNotFoundException, NoStationFileFoundException {
         File directory = new File(directoryPath);
         File[] stationFiles = directory.listFiles();
 
-        if (stationFiles != null) {
+        if (stationFiles.length > 0) {
             File[] filteredStationFiles = Arrays.stream(stationFiles)
                     .filter(file -> file.isFile() && isValidStationFilename(file, _ril100))
                     .toArray(File[]::new);
@@ -17,7 +17,7 @@ public class StationFileInput {
                 return filteredStationFiles[0].getPath();
             throw new StationNotFoundException(_ril100);
         }
-        return null;
+        throw new NoStationFileFoundException("Cannot find any station file");
     }
 
     private static boolean isValidStationFilename(File _file, String _fileNamePrefix) {
@@ -38,4 +38,9 @@ public class StationFileInput {
         }
     }
 
+    public static class NoStationFileFoundException extends Exception {
+        public NoStationFileFoundException(String _message) {
+            super(_message);
+        }
+    }
 }

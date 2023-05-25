@@ -23,15 +23,13 @@ public class CaseStudyRESTController {
         String[] sectionsArray;
 
         try {
-            if (!isValidParameters(_ril100, _trainNumber, _waggonNumber)) {
-                return null;
-            }
+            isValidParameters(_ril100, _trainNumber, _waggonNumber);
 
             String stationXmlPath = StationFileInput.getStationXmlPath(_ril100);
             sectionsArray = StationXmlParser.getSection(stationXmlPath, _trainNumber, _waggonNumber);
         }
         catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException _e) {
-            return null;
+            return "Error processing xml";
         } catch (StationFileInput.StationNotFoundException _e) {
             return "Station ril100 not found. Value: " + _e.getRil100();
         } catch (InvalidHttpParametersException _e) {
@@ -39,13 +37,15 @@ public class CaseStudyRESTController {
                     + _e.getInvalidName().toString()
                     + ", Value: "
                     + _e.getInvalidValue();
+        } catch (StationFileInput.NoStationFileFoundException _e) {
+            return _e.getMessage();
         }
         return convertToJson(sectionsArray);
     }
 
     private static boolean isValidParameters(String _ril100, int _trainNumber,int _waggonNumber)
             throws InvalidHttpParametersException {
-        if (!(_ril100.length() >= 2 && _ril100.length() <=5))
+        if (!(_ril100.length() >= 2 && _ril100.length() <= 5))
             throw new InvalidHttpParametersException(_ril100, InvalidHttpParametersException.ParameterName.RIL100);
         String trainNumberAsString = Integer.toString(_trainNumber);
         if (!(trainNumberAsString.length() >= 2 && trainNumberAsString.length() <= 4))
